@@ -15,7 +15,7 @@ enum class ButtonType{
     PLAY
 };
 
-bool ButtonPressed(ButtonType type, sf::Event& event, std::map<ButtonType, button>& buttons, sf::Vector2f& mousePos) {
+inline bool ButtonPressed(ButtonType type, sf::Event& event, std::map<ButtonType, button>& buttons, sf::Vector2f& mousePos) {
     buttons[type].hovered = false; /// Reset hovered animation
     if (buttons[type].buttonHitbox.getGlobalBounds().contains(mousePos)) {
         buttons[type].hovered = true; // Set hovered animation

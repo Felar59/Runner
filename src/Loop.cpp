@@ -35,7 +35,6 @@ void LoopManagement::run(sf::RenderWindow& window){
             currentState->update();
         }
         currentState->draw(window);
-
         if(inPause){
             pause->drawPause(window);
         }

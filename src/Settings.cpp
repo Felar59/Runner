@@ -104,7 +104,7 @@ void Settings::LoadRessources(sf::RenderWindow& window,  sf::Font& font) {
 }
 
 void Settings::handleEvents(sf::RenderWindow& window, sf::Event& event) {
-    buttons
+    return;
 }
 
 void Settings::draw(sf::RenderWindow& window, std::map<ButtonType, button> buttons) {

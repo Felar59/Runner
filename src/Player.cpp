@@ -132,7 +132,7 @@ bool Player::ApplyGravity(std::vector<std::vector <Tile>>& tiles, float deltaTim
             sf::RectangleShape tileShape = tiles[y][x].getRect();
             if(RectRectCollision(hitboxPlayer, tileShape)){
                 Velocity = 0;
-                pos.y = tileShape.getPosition().y - hitboxPlayer.getGlobalBounds().height + 2.f; // +2 for issue with windows to be sure of being on the tile and not slightly over which make us fall in a while.
+                pos.y = tileShape.getPosition().y - hitboxPlayer.getGlobalBounds().height + 1.f; // +1 for issue with windows to be sure of being on the tile and not slightly over which make us fall in a while.
                 hitboxPlayer.setPosition(pos.x, pos.y); 
                 return true;
             }
