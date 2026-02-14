@@ -21,7 +21,6 @@ Tiles::Tiles(sf::RenderWindow& window){
             }
         }
     }
-    
 }
 
 Tiles::~Tiles(){
@@ -79,7 +78,7 @@ void Tiles::draw(sf::RenderWindow& window){
     }
 }
 
-void Tiles::shift(std::vector<std::vector<Tile>>& tiles, Enemy& enemy){
+void Tiles::shift(std::vector<std::vector<Tile>>& tiles, std::vector<Enemy>& enemies){
     // Shift all tiles to the left
     for (size_t y = 0; y < tiles.size(); y++){
         for (size_t x = 0; x < tiles[y].size() - 1; x++){
@@ -88,7 +87,8 @@ void Tiles::shift(std::vector<std::vector<Tile>>& tiles, Enemy& enemy){
         }
     }
     elapsed += 0.0015f;
-    noiseVariationForce += elapsed;
+    float maxVariation = std::min(elapsed, 0.7f);
+    noiseVariationForce += maxVariation;
     float n = noise.GetNoise(noiseVariationForce, 0.0f);
     int groundHeight = std::min(8, static_cast<int>((n + 1.0f) / 1.4f * (tiles.size() - 1)));
     for (size_t y = 0; y < tiles.size(); y++){
@@ -129,17 +129,19 @@ void Tiles::shift(std::vector<std::vector<Tile>>& tiles, Enemy& enemy){
             }
         }
     }
-    if (tiles[groundHeight][17].isVoid() && tiles[groundHeight][18].isVoid()){ // not spawn behind a wall
-        enemy.summonEnemy({tiles[groundHeight][19].getPos().x - TileSizeX, tiles[groundHeight][19].getPos().y - TileSizeY}, elapsed);
+    if (tiles[groundHeight-1][17].isVoid() && tiles[groundHeight-1][18].isVoid()){ // not spawn behind a wall
+        for(auto& enemy : enemies){
+            enemy.summonEnemy({tiles[groundHeight][19].getPos().x - TileSizeX, tiles[groundHeight][19].getPos().y - TileSizeY}, elapsed);
+        }
     }
 }
 
-void Tiles::moves(float& deltaTime, Enemy& enemy){
+void Tiles::moves(float& deltaTime, std::vector<Enemy>& enemies){
     moveOffset += GroundSpeed * deltaTime;
 
     if (moveOffset >= TileSizeX){
         moveOffset -= TileSizeX;
-        shift(tiles, enemy);
+        shift(tiles, enemies);
     }
 
     for (size_t y = 0; y < tiles.size(); y++){

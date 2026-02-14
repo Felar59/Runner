@@ -1,5 +1,6 @@
 #include "GameState.hpp"
 #include "LoopManagement.hpp"
+#include "Settings.hpp"
 #include <iostream>
 
 GameState::GameState(sf::RenderWindow& window) : tiles(window){
@@ -15,26 +16,48 @@ bool GameState::LoadRessources(sf::RenderWindow& window) {
     player.LoadPlayer(window);
     
     //Load Enemy
-    enemy.LoadEnemy(window);
+    enemies.emplace_back(sf::Vector2f(-300.f, 500.f), "Idler", ressourceManager);
+    enemies.emplace_back(sf::Vector2f(-300.f, 500.f), "Idler", ressourceManager);
+    enemies.emplace_back(sf::Vector2f(-300.f, 500.f), "Idler", ressourceManager);
+    enemies.emplace_back(sf::Vector2f(-300.f, 500.f), "Idler", ressourceManager);
 
+    for(auto& enemy : enemies){
+        enemy.LoadEnemy(window);
+    }
     // Load tiles
     Tiles tiles(window);
     
     // Load paralax background
-    paralaxBG.LoadRessources(window);
+    paralaxBG.LoadRessources(window, false);
+    
+    // Load HUD
+    hud.LoadRessources(window);
+
+
+    // Start Music
+    loopMain->callSoundManager("music");
+
+    Settings datas;
     
     // start Clock
     clock.restart();
     lastFrameTime = clock.getElapsedTime();
-
     return true;
 };
 
 void GameState::handleEvents(sf::RenderWindow& window, sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Space && (onFloor || doubleJump)) {
-            // Jump and allowed or not doubleJump
+            // Jump
+            loopMain->callSoundManager("jump");
             doubleJump = player.jump(doubleJump, onFloor);
+        }
+    }
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            // Attack
+            loopMain->callSoundManager("slash");
+            isAttacking = true;
         }
     }
 };
@@ -49,36 +72,60 @@ void GameState::update() {
     paralaxBG.Update(deltaTime);
 
     // Move floor for runner
-    tiles.moves(deltaTime, enemy); 
-    
+    tiles.moves(deltaTime, enemies);  
     
     // Gravity on player and collision
     onFloor = player.ApplyGravity(tiles.getVector(), deltaTime);
     if (onFloor) {
         doubleJump = true;
     }
-    // Change Skin player depending on velocity
-    player.updateSkin(deltaTime);
-    
+
     // Gravity on enemy and collision
-    enemy.ApplyGravity(tiles.getVector(), tiles.getSpeed(), deltaTime);
+    std::vector<std::pair<std::string ,sf::RectangleShape>> enemiesHitbox;
+    enemiesHitbox.reserve(enemies.size());
+    for(auto& enemy : enemies){
+        enemy.ApplyGravity(tiles.getVector(), tiles.getSpeed(), deltaTime);
+        // Enemy collision with player or sword
+        enemy.collid(player.getHitbox(), player.getSwordHitbox(), isAttacking);
+        
+        enemiesHitbox.emplace_back(enemy.getHabit(), enemy.getHitbox());
+    }
     
-    // Change Skin enemy depending on velocity
-    enemy.updateSkin(deltaTime);
+    // Player collision with enemy or wall
+    if (player.collid(enemiesHitbox))
+    {
+        loopMain->callSoundManager("hurt");
+    }   
+    
+    difficulty += deltaTime*10;
+    hud.update(static_cast<int>(difficulty), static_cast<int>(difficulty/100), player.getHeatlh(), isPause);
 };
 
 void GameState::draw(sf::RenderWindow& window) {
     // Paralax background
     paralaxBG.Draw(window);
-
-    // Player
-    player.draw(window);
+    
+    // Change Skin enemy
+    for(auto& enemy : enemies){
+        enemy.updateSkin(deltaTime);
+    }
+    
+    // Change Skin player
+    player.updateSkin(isAttacking, deltaTime);
 
     // Enemy
-    enemy.draw(window);
+    for(auto& enemy : enemies){
+        enemy.draw(window);
+    }
+    
+    // Player
+    player.draw(window);
     
     // Tiles
     tiles.draw(window);    
+
+    // HUD
+    hud.draw(window);
 };
 
 void GameState::setLoopManager(LoopManagement* manager) {

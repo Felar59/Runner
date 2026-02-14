@@ -20,7 +20,7 @@ public:
     ParalaxBG();
     ~ParalaxBG();
 
-    void LoadRessources(sf::RenderWindow& window);
+    void LoadRessources(sf::RenderWindow& window, bool inMenu);
     void Update(float deltaTime);
     void Draw(sf::RenderWindow& window);
 };

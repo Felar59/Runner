@@ -3,6 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-bool RectRectCollision(sf::RectangleShape& rect1, sf::RectangleShape& rect2);
+bool RectRectCollision(const sf::RectangleShape& rect1,const sf::RectangleShape& rect2);
 
 #endif

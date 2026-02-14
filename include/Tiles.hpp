@@ -40,9 +40,9 @@ public:
 
     // Others
     void LoadRessources(sf::RenderWindow& window);
-    void moves(float& deltaTime, Enemy& enemy);
+    void moves(float& deltaTime, std::vector<Enemy>& enemy);
     void draw(sf::RenderWindow& window);
-    void shift(std::vector<std::vector<Tile>>& tiles, Enemy& enemy);
+    void shift(std::vector<std::vector<Tile>>& tiles, std::vector<Enemy>& enemy);
 };
 
 #endif

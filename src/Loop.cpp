@@ -51,3 +51,15 @@ void LoopManagement::changeState(std::unique_ptr<ManageState> newState, sf::Rend
         exit(1);
     }
 };
+
+void LoopManagement::setSoundManager(std::shared_ptr<SoundManager> soundManager) {
+    this->soundManager = soundManager;
+}
+
+void LoopManagement::callSoundManager(const std::string& soundName) {
+    if (soundName == "music") {
+        soundManager->playMusic();
+    } else {
+        soundManager->playSound(soundName);
+    }
+}

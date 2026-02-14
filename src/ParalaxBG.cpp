@@ -6,7 +6,7 @@ ParalaxBG::ParalaxBG() {
 ParalaxBG::~ParalaxBG() {
 }
 
-void ParalaxBG::LoadRessources(sf::RenderWindow& window) {
+void ParalaxBG::LoadRessources(sf::RenderWindow& window, bool inMenu) {
     bgTextures.resize(4);
     bgSprites.resize(4);
     bgSpritesv.resize(3);
@@ -22,12 +22,16 @@ void ParalaxBG::LoadRessources(sf::RenderWindow& window) {
             return;
         }
         bgSprites[i].setTexture(bgTextures[i]);
-        bgSprites[i].setPosition(0, -TileSizeY/2);
+        float Ypos = 0;
+        if (!inMenu){
+            Ypos = -TileSizeY/2;
+        }
+        bgSprites[i].setPosition(0, Ypos);
         sf::Vector2 ScaleBackgrounds = {bgSize.x / bgTextures[i].getSize().x, bgSize.y / bgTextures[i].getSize().y};
         bgSprites[i].setScale(ScaleBackgrounds.x, ScaleBackgrounds.y);
         if (i > 0) {
             bgSpritesv[i-1] = bgSprites[i];
-            bgSpritesv[i-1].setPosition(bgSprites[i].getPosition().x + bgSprites[i].getGlobalBounds().width, bgSprites[i].getPosition().y);
+            bgSpritesv[i-1].setPosition(bgSprites[i].getPosition().x + bgSprites[i].getGlobalBounds().width - 1.f, bgSprites[i].getPosition().y);
         }
     }
 }
@@ -37,10 +41,10 @@ void ParalaxBG::Update(float deltaTime){
         bgSprites[i].setPosition(bgSprites[i].getPosition().x - (bgSpeed[i-1]*deltaTime), bgSprites[i].getPosition().y);
         bgSpritesv[i-1].setPosition(bgSpritesv[i-1].getPosition().x - (bgSpeed[i-1]*deltaTime), bgSpritesv[i-1].getPosition().y);
         if (bgSprites[i].getPosition().x <= -bgSprites[i].getGlobalBounds().width) {
-            bgSprites[i].setPosition(bgSpritesv[i-1].getPosition().x + bgSpritesv[i-1].getGlobalBounds().width, bgSprites[i].getPosition().y);
+            bgSprites[i].setPosition(bgSpritesv[i-1].getPosition().x + bgSpritesv[i-1].getGlobalBounds().width - 1.f, bgSprites[i].getPosition().y);
         }
         if (bgSpritesv[i-1].getPosition().x <= -bgSprites[i].getGlobalBounds().width) {
-            bgSpritesv[i-1].setPosition(bgSprites[i].getPosition().x + bgSprites[i].getGlobalBounds().width, bgSpritesv[i-1].getPosition().y);
+            bgSpritesv[i-1].setPosition(bgSprites[i].getPosition().x + bgSprites[i].getGlobalBounds().width - 1.f, bgSpritesv[i-1].getPosition().y);
         }
     }
 }

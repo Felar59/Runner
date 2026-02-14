@@ -5,6 +5,7 @@
 #include <memory>
 #include "PauseMenu.hpp"
 #include "ManageState.hpp"
+#include "SoundManager.hpp"
 
 class PauseMenu;
 
@@ -15,6 +16,8 @@ private:
     sf::RenderWindow* window;
     PauseMenu* pause;
     bool inPause = false;
+    std::shared_ptr<SoundManager> soundManager;
+    
 
 public:
     LoopManagement();
@@ -22,6 +25,8 @@ public:
 
     void run(sf::RenderWindow& window);
     void changeState(std::unique_ptr<ManageState> newState, sf::RenderWindow& window);
+    void setSoundManager(std::shared_ptr<SoundManager> soundManager);
+    void callSoundManager(const std::string& soundName);
 };
 
 #endif

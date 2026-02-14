@@ -14,13 +14,26 @@ private:
     float Velocity = 0.0f;
     float gravity = 60.0f/0.016f;
     sf::RectangleShape hitboxPlayer;
-    std::vector<sf::Texture> runTextures;
-    std::vector<sf::Sprite> runSprites;
-    std::vector<sf::Texture> jumpTextures;
-    std::vector<sf::Sprite> jumpSprites;
+    struct Animation {
+        std::vector<sf::Texture> textures;
+        std::vector<sf::Sprite> sprites;
+        float speed;
+        int currentFrame = 0;
+        float elapsedTime = 0.0f;
+    };
+    enum class AnimationType {
+        RUN,
+        JUMP,
+        ATTACK,
+        IDLE,
+        DEATH,
+        DAMAGED
+    };
+    std::map<AnimationType, Animation> animations;
     
     sf::Sprite currentSkin;
-
+    sf::RectangleShape swordHitbox;
+    bool damaged = false;
 
 public:
     Player(); 
@@ -29,6 +42,8 @@ public:
     // Getter
     sf::Vector2f getPos();
     int getHeatlh();
+    sf::RectangleShape getSwordHitbox();
+    sf::RectangleShape getHitbox();
 
     // Setter
     void setPos(sf::Vector2f newPos);
@@ -39,7 +54,10 @@ public:
     bool ApplyGravity(std::vector<std::vector <Tile>>& tiles, float deltaTime);
     bool jump(bool doubleJump, bool onFloor);
     void draw(sf::RenderWindow& window);
-    void updateSkin(float deltaTime);
+    void updateSkin(bool& isAttacking, float deltaTime);
+    void changeSkin(AnimationType type, float deltaTime);
+    void changeSkinFlying(float deltaTime);
+    bool collid(const std::vector<std::pair<std::string ,sf::RectangleShape>>& HitboxAndHabit);
 };
 
 #endif

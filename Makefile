@@ -6,11 +6,15 @@ SRC = src/Main.cpp \
 	  src/Loop.cpp \
 	  src/Player.cpp \
 	  src/Enemy.cpp \
+	  src/RessourceManager.cpp \
 	  src/Tile.cpp \
 	  src/Tiles.cpp \
+	  src/Hud.cpp \
 	  src/PauseMenu.cpp \
 	  src/ParalaxBG.cpp \
 	  src/Collision.cpp \
+	  src/Settings.cpp \
+	  src/SoundManager.cpp \
 	  src/gameStates/ManageState.cpp \
 	  src/gameStates/GameState.cpp \
 	  src/gameStates/MenuState.cpp \
@@ -19,10 +23,11 @@ SRC = src/Main.cpp \
 CXX = g++
 
 # SFML
-SFML = -lsfml-graphics -lsfml-window -lsfml-system
+SFML = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
 
 # Options de compilation
-CXXFLAGS = -Wall -std=c++17 -Iinclude -Iinclude/gameStates
+CXXFLAGS = -g -Wall -std=c++17 -Iinclude -Iinclude/gameStates
 
 # Règle par défaut
 $(TARGET): $(SRC)
